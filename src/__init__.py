@@ -1,5 +1,8 @@
-from .models.network import SmallWorldNetwork
+from .models.network_generator import SmallWorldNetwork, NetworkGenerator
+from .models.analyzer import NetworkAnalyzer
 
-__alll__ = [
+__all__ = [
     "SmallWorldNetwork"
+    "NetworkAnalyzer"
+    "NetworkGenerator"
 ]
