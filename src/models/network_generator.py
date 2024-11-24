@@ -24,9 +24,6 @@ class SmallWorldNetwork(NetworkGenerator):
         self.graph = nx.Graph()
         self.graph.add_nodes_from(range(self.n))
 
-        # TODO
-        # このへんの実装をうまいことやる
-
         # create simple connection
         for i in range(self.n):
             self.graph.add_edge(i, (i+1)%self.n)
@@ -61,7 +58,7 @@ class SmallWorldNetwork(NetworkGenerator):
         plt.axis('off')
         plt.show()
     
-class LatticeGraph(NetworkGenerator):
+class LatticeNetwork(NetworkGenerator):
     def __init__(self, width, height):
         """
         Initialize a lattice graph generator
@@ -112,7 +109,7 @@ class LatticeGraph(NetworkGenerator):
 
 # 部分格子グラフ
 # TODO: nodeを適当に置きまくって、その距離が1のもの同士を繋げばいいのか。多分これ
-class PartialLatticeGraph(NetworkGenerator):
+class PartialLatticeNetwork(NetworkGenerator):
     
     def __init__(self, width, height, num_node):
         """
@@ -161,6 +158,35 @@ class PartialLatticeGraph(NetworkGenerator):
         plt.axis('off')
         plt.show()     
         
+
+class RandomGraphNetwork(NetworkGenerator):
+    def __init__(self, n_nodes, p_wiring=1e-1):
+        self.n = n_nodes # number of nodes
+        self.p = p_wiring # probability of rewiring
+        self.graph = nx.Graph()
+    
+    def generate(self) -> nx.Graph:
+        """create a random network"""
+        # initialize
+        self.graph = nx.Graph()
+        self.graph.add_nodes_from(range(self.n))
+        
+        # wire randomly
+        for node1 in range(self.n):
+            for node2 in range(node1 + 1, self.n):
+                if random.random() < self.p:
+                    self.graph.add_edge(node1, node2) 
+
+        return self.graph
+
+    def draw(self, G: nx.Graph):
+        pos = nx.circular_layout(G)
+        nx.draw(G, pos, node_size=30, node_color='red')
+        plt.axis('off')
+        plt.show()
+
+
+
 # 使用例
 if __name__ == "__main__":
     swn = SmallWorldNetwork(n_nodes=100, k_neighbors=4)
