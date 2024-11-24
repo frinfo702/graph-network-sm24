@@ -38,29 +38,78 @@ class SmallWorldNetwork(NetworkGenerator):
                 self.graph.add_edge(i, (i+j) % self.n)  
                 self.graph.add_edge(i, (i-j) % self.n)
         
+                # エッジのリワイヤリング
         edges = list(self.graph.edges())
-        num_edges = len(edges)
-        num_edges = len(edges)
-        num_rewire = int(num_edges * self.p)
-
-        for edge in random.sample(edges, num_rewire):
-            u, v = edge
-            self.graph.remove_edge(u, v)
-        
-            # define a direction of rewiring
-            if random.random() < 0.5:
-                new_u = u
-                new_v = random.choice([node for node in self.graph.nodes() if node != u and not self.graph.has_edge(u, node)])
-            else:
-                new_v = v
-                new_u = random.choice([node for node in self.graph.nodes() if node != v and not self.graph.has_edge(node, v)])
-
-            self.graph.add_edge(new_u, new_v)
+        for u, v in edges:
+            if random.random() < self.p:
+                # エッジを削除
+                self.graph.remove_edge(u, v)
+                # 新しい接続先を選ぶ
+                while True:
+                    new_node = random.randint(0, self.n - 1)
+                    if new_node != u and not self.graph.has_edge(u, new_node):
+                        break
+                self.graph.add_edge(u, new_node)
         
         return self.graph
     
+    def draw(self, G: nx.Graph):
+        # SmallWorldNetworkを描画
+        pos = nx.circular_layout(G)
+        nx.draw(G, pos, node_size=30, node_color='red')
+        plt.axis('off')
+        plt.show()
+    
+# 格子グラフ
+# TODO: nodeを適当に置きまくって、その距離が1のもの同士を繋げばいいのか。多分これ
+class LatticeGraph(NetworkGenerator):
+    
+    def __init__(self, width, height, num_node):
+        """
+        Initialize a lattice graph generator
+        Args:
+        width (int): Width of the lattice grid
+        height (int): Height of the lattice grid 
+        """
+        self.num_node = num_node # a number of node
+        self.width = width
+        self.height = height
+        self.graph = nx.Graph
 
+    def generate(self) -> nx.Graph:
+        """create a lattice graph"""
+        self.graph = nx.Graph()
 
+        # create array of all possible grid coordinates
+        all_points = [(x, y) for x in range(self.width) for y in range(self.height)]
+        
+        # select n nodes randomly
+        selected_points = random.sample(all_points, min(self.num_node, len(all_points)))
+        
+        # add selected points as nodes
+        for point in selected_points:
+            self.graph.add_node(point)
+                    
+        # 行方向にエッジを追加
+        for x, y in selected_points:
+            neighbor = (x, y + 1)
+            if neighbor in selected_points:
+                self.graph.add_edge((x, y), neighbor)
+        
+        # 列方向にエッジを追加
+        for x, y in selected_points:
+            neighbor = (x + 1, y)
+            if neighbor in selected_points:
+                self.graph.add_edge((x, y), neighbor)
+        
+        return self.graph
+    
+    def draw(self, G: nx.Graph):
+        # LatticeGraph用の描画方法
+        pos = {node: node for node in G.nodes()}
+        nx.draw(G, pos, node_size=30, node_color='blue', with_labels=False)
+        plt.axis('off')
+        plt.show()     
         
 # 使用例
 if __name__ == "__main__":
