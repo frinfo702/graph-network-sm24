@@ -61,18 +61,14 @@ class SmallWorldNetwork(NetworkGenerator):
         plt.axis('off')
         plt.show()
     
-# 格子グラフ
-# TODO: nodeを適当に置きまくって、その距離が1のもの同士を繋げばいいのか。多分これ
 class LatticeGraph(NetworkGenerator):
-    
-    def __init__(self, width, height, num_node):
+    def __init__(self, width, height):
         """
         Initialize a lattice graph generator
         Args:
         width (int): Width of the lattice grid
         height (int): Height of the lattice grid 
         """
-        self.num_node = num_node # a number of node
         self.width = width
         self.height = height
         self.graph = nx.Graph
@@ -85,22 +81,75 @@ class LatticeGraph(NetworkGenerator):
         all_points = [(x, y) for x in range(self.width) for y in range(self.height)]
         
         # select n nodes randomly
-        selected_points = random.sample(all_points, min(self.num_node, len(all_points)))
+        # selected_points = random.sample(selected_points, min(self.num_node, len(selected_points)))
         
         # add selected points as nodes
-        for point in selected_points:
-            self.graph.add_node(point)
+        for x, y in all_points:
+            self.graph.add_node((x, y))
                     
         # 行方向にエッジを追加
-        for x, y in selected_points:
+        for x, y in all_points:
             neighbor = (x, y + 1)
-            if neighbor in selected_points:
+            if neighbor in all_points:
                 self.graph.add_edge((x, y), neighbor)
         
         # 列方向にエッジを追加
-        for x, y in selected_points:
+        for x, y in all_points:
             neighbor = (x + 1, y)
-            if neighbor in selected_points:
+            if neighbor in all_points:
+                self.graph.add_edge((x, y), neighbor)
+        
+        return self.graph
+    
+    def draw(self, G: nx.Graph):
+        # LatticeGraph用の描画方法
+        pos = {node: node for node in G.nodes()}
+        nx.draw(G, pos, node_size=30, node_color='blue', with_labels=False)
+        plt.axis('off')
+        plt.show()     
+        
+
+
+# 部分格子グラフ
+# TODO: nodeを適当に置きまくって、その距離が1のもの同士を繋げばいいのか。多分これ
+class PartialLatticeGraph(NetworkGenerator):
+    
+    def __init__(self, width, height, num_node):
+        """
+        Initialize a patial lattice graph generator
+        Args:
+        width (int): Width of the lattice grid
+        height (int): Height of the lattice grid 
+        """
+        self.num_node = num_node # a number of node
+        self.width = width
+        self.height = height
+        self.graph = nx.Graph
+
+    def generate(self) -> nx.Graph:
+        """create a partial lattice graph"""
+        self.graph = nx.Graph()
+
+        # create array of all possible grid coordinates
+        all_points = [(x, y) for x in range(self.width) for y in range(self.height)]
+        
+        # select n nodes randomly
+        all_points = random.sample(all_points, min(self.num_node, len(all_points)))
+        
+        # add selected points as nodes
+        for point in all_points:
+            self.graph.add_node(point)
+                    
+        # 行方向にエッジを追加
+        for x, y in all_points:
+            neighbor = (x, y + 1)
+            if neighbor in all_points:
+                self.graph.add_edge((x, y), neighbor)
+        
+        # 列方向にエッジを追加
+        for x, y in all_points:
+            neighbor = (x + 1, y)
+            if neighbor in all_points:
                 self.graph.add_edge((x, y), neighbor)
         
         return self.graph
