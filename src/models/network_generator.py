@@ -38,13 +38,14 @@ class SmallWorldNetwork(NetworkGenerator):
                 self.graph.add_edge(i, (i+j) % self.n)  
                 self.graph.add_edge(i, (i-j) % self.n)
         
-                # エッジのリワイヤリング
+        # rewire edges
+        # 隣接行列の表を意識して！
         edges = list(self.graph.edges())
         for u, v in edges:
             if random.random() < self.p:
-                # エッジを削除
+                # remove a edge
                 self.graph.remove_edge(u, v)
-                # 新しい接続先を選ぶ
+                # select new endpoint
                 while True:
                     new_node = random.randint(0, self.n - 1)
                     if new_node != u and not self.graph.has_edge(u, new_node):
@@ -54,7 +55,7 @@ class SmallWorldNetwork(NetworkGenerator):
         return self.graph
     
     def draw(self, G: nx.Graph):
-        # SmallWorldNetworkを描画
+        # draw a SmallWorldNetwork 
         pos = nx.circular_layout(G)
         nx.draw(G, pos, node_size=30, node_color='red')
         plt.axis('off')
