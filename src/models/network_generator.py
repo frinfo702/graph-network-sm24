@@ -2,13 +2,20 @@ from abc import ABC, abstractmethod
 import networkx as nx
 import numpy as np
 import random
-import icecream as ic
 import matplotlib.pyplot as plt
 
 class NetworkGenerator(ABC):
-    """ネットワーク生成の基底となるクラス"""
+    """
+    Abstract base class for network generation.
+    Defines the interface for creating different types of networks.
+    """
     @abstractmethod
     def generate(self) -> nx.Graph:
+        """
+        Abstract method to generate a network.
+        Returns:
+            nx.Graph: Generated network
+        """
         pass
 
 class SmallWorldNetwork(NetworkGenerator):
@@ -105,10 +112,6 @@ class LatticeNetwork(NetworkGenerator):
         plt.axis('off')
         plt.show()     
         
-
-
-# 部分格子グラフ
-# TODO: nodeを適当に置きまくって、その距離が1のもの同士を繋げばいいのか。多分これ
 class PartialLatticeNetwork(NetworkGenerator):
     
     def __init__(self, width, height, num_node):
@@ -160,26 +163,46 @@ class PartialLatticeNetwork(NetworkGenerator):
         
 
 class RandomGraphNetwork(NetworkGenerator):
-    def __init__(self, n_nodes, p_wiring=1e-1):
-        self.n = n_nodes # number of nodes
-        self.p = p_wiring # probability of rewiring
+    """
+    Generates a random graph network where edges are added with a given probability.
+    The network follows the Erdős-Rényi random graph model (G(n,p) model).
+    """
+    
+    def __init__(self, n_nodes: int, p_wiring: float = 1e-1):
+        """
+        Initialize the random graph network generator.
+        
+        Args:
+            n_nodes (int): Number of nodes in the network
+            p_wiring (float): Probability of adding an edge between any pair of nodes (default: 0.1)
+        """
+        self.n = n_nodes
+        self.p = p_wiring
         self.graph = nx.Graph()
     
     def generate(self) -> nx.Graph:
-        """create a random network"""
-        # initialize
+        """
+        Create a random network by adding edges with probability p_wiring.
+        
+        Returns:
+            nx.Graph: Generated random network
+        """
         self.graph = nx.Graph()
         self.graph.add_nodes_from(range(self.n))
         
-        # wire randomly
         for node1 in range(self.n):
             for node2 in range(node1 + 1, self.n):
                 if random.random() < self.p:
-                    self.graph.add_edge(node1, node2) 
-
+                    self.graph.add_edge(node1, node2)
         return self.graph
 
     def draw(self, G: nx.Graph):
+        """
+        Visualize the network using a circular layout.
+        
+        Args:
+            G (nx.Graph): Network to visualize
+        """
         pos = nx.circular_layout(G)
         nx.draw(G, pos, node_size=30, node_color='red')
         plt.axis('off')
