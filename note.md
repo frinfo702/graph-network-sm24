@@ -4,6 +4,7 @@
 1. 単一責任の原則:
 - `NetworkGenerator`: ネットワーク生成のみを担当
 - `NetworkAnalyzer`: 分析とプロットを担当
+- `NetworkSimulator`: シミュレーションに特化
 
 2. 疎結合:
 - 生成と分析が分離され、独立して変更可能

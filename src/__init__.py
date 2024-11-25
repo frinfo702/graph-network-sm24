@@ -1,9 +1,11 @@
-from .models.network_generator import SmallWorldNetwork, NetworkGenerator, LatticeNetwork
+from .models.network_generator import WattsStrogatzNetwork, NetworkGenerator, LatticeNetwork
 from .models.analyzer import NetworkAnalyzer
+from .models.network_simulator import NetworkSimulator
 
 __all__ = [
-    "SmallWorldNetwork"
+    "WattsStrogatzNetwork"  
     "NetworkAnalyzer"
     "NetworkGenerator"
     "LatticeNetwork"
+    "NetworkSimulator"
 ]

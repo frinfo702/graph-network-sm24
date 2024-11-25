@@ -18,8 +18,8 @@ class NetworkGenerator(ABC):
         """
         pass
 
-class SmallWorldNetwork(NetworkGenerator):
-    def __init__(self, n_nodes, k_neighbors, p_rewiring=1e-2):
+class WattsStrogatzNetwork(NetworkGenerator):
+    def __init__(self, n_nodes, k_neighbors, p_rewiring=1e-1):
         self.n = n_nodes # number of nodes
         self.k = k_neighbors # number of nearest neighbors
         self.p = p_rewiring # probability of rewiring
