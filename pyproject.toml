@@ -14,3 +14,26 @@ dependencies = [
     "pandas>=2.2.3",
     "scipy>=1.14.1",
 ]
+
+[tool.ruff]
+# 行の長さ
+line-length = 88
+# 対象とするPythonバージョン
+target-version = "py38"
+
+# 有効にするルール
+select = [
+    "E",  # pycodestyle
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+]
+
+# 無視するルール
+ignore = [
+    "E203"  # ":"の前後のスペースについて
+]
+
+# import整理の設定
+[tool.ruff.isort]
+known-first-party = ["your_package_name"]
